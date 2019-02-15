@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="hyzhai">
+    <meta name="description" content="hyzhai's blog">
+    <meta name="generator" content="jekyll 3.8.5">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/posts.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
+    <title>在GitHub建立自己的博客 - HYZHAI'S BLOG</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top flex-shrink-0"
+        style="opacity: 0.98">
+        <div class="container">
+            <a href="/" class="navbar-brand mr-auto"><b>HYZHAI'S BLOG</b></a>
+            <ul class="navbar-nav">
+                <li class="nav-item mr-3"><a href="/" class="nav-link">Home</a></li>
+                <li class="nav-item mr-3"><a href="/collections.html" class="nav-link">Collections</a></li>
+                <li class="nav-item"><a href="/about.html" class="nav-link">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container flex-shrink-0 mt-5">
+        <div class="jumbotron my-5 bg-light">
+    <div class="mx-5 text-justify">
+        
+        <h1><b>在GitHub建立自己的博客</b></h1>
+        <p class="text-muted">Feb 02, 2019</p>
+        
+        <p>第一篇博客，记录一下建立整个博客的过程。</p>
+<p>GitHub为每位用户提供了一个免费的域名 <i>https://username.github.io/</i> ，可以在它上面建立静态网站，也可以建立个人博客。GitHub推荐的博客工具是<a
+        href="https://jekyllrb.com/"
+        target="_blank">jekyll</a>。jekyll是一种静态网站生成器，如果你用Markdown写博客，它可以自动地把Markdown文件渲染为网页。结合<a
+        href="https://shopify.github.io/liquid/">liquid</a>语法，jekyll可以实现一些高级的功能。jekyll提供了很多的博客模板，让你可以轻松地建立博客。如果你对HTML、CSS和JavaScript熟悉，修改这些模板或者建立自己的页面以达到自己满意的效果也是很容易的。
+</p>
+<p>在这次建立博客的过程中，我主要使用了jekyll、Bootstrap（前端框架）和Git，以下是完整的流程：</p>
+<h2 class="mt-5 mb-3"><b>安装jekyll、Bootstrap和Git</b></h2>
+<p>以Windows 10安装目前最新的jekyll 3.8.5、Bootstrap 4.2.1和Git 2.20.1为例。由于jekyll是用Ruby语言写的，因此安装jekyll需要先安装Ruby。在<a
+        href="https://rubyinstaller.org/downloads/" target="_blank">Ruby下载页面</a>下载安装 <u>Ruby+Devkit 2.6.1-1
+        (x64).exe</u>（32位系统安装x86版本），然后打开命令行窗口输入 <span class="text-monospace">gem install jekyll bundler</span>
+    安装jekyll。测试jekyll是否安装成功，可以输入 <span class="text-monospace">jekyll -V</span> 查看是否能输出版本号。如果能输出版本号，则说明安装成功。</p>
+<p>Bootstrap的安装较为简单（如果不使用Bootstrap可以不用安装）。在<a
+        href="https://getbootstrap.com/docs/4.2/getting-started/download/">Bootstrap下载页面</a>下载编译好的的 CSS 和 JS
+    ，然后解压到博客目录，在HTML文件正确引用即可。</p>
+<pre class="bg-dark text-white"><code>&lt;link rel="stylesheet" href="/css/bootstrap.min.css"&gt;
+&lt;script src="/js/bootstrap.min.js"&gt;&lt;/script&gt;</code></pre>
+<p>Git 的安装也比较简单，在<a href="https://git-scm.com/downloads">Git下载页面</a>下载安装Git即可。</p>
+
+<h2 class="mt-5 mb-3"><b>新建GitHub博客仓库</b></h2>
+<p>登录GitHub，新建仓库，命名为<span class="text-monospace">yourusername.github.io</span>。使用 <i>https://yourusername.github.io/</i>
+    访问的就是该仓库下的文件。</p>
+<figure class="figure">
+    <img src="/resource/github.png" alt="" style="width: 75%">
+    <figcaption class="figure-caption text-left font-italic">在GitHub新建博客仓库</figcaption>
+</figure>
+
+<h2 class="mt-5 mb-3"><b>使用jekyll生成博客</b></h2>
+<p>命令<span class="text-monospace">jekyll new myblog</span>可以生成一个jekyll默认的博客。命令行切换到桌面，输入<span
+        class="text-monospace">jekyll new myblog</span>，会发现桌面多了一个myblog文件夹。切换到myblog
+    文件夹下，再输入 <span class="text-monospace">jekyll serve</span> ，打开 <a
+        href="http://localhost:4000">http://localhost:4000</a> 。这就是使用 jekyll 建立的第一个博客。</p>
+<figure class="figure">
+    <img src="/resource/firstblog.png" alt="" style="width: 75%">
+    <figcaption class="figure-caption text-left font-italic">jekyll生成默认博客</figcaption>
+</figure>
+
+<h2 class="mt-5 mb-3"><b>博客推送到GitHub</b></h2>
+
+<h2 class="mt-5 mb-3"><b>参考资料</b></h2>
+<p>资料有中文也有英文，建议阅读英文，中文文档存在很久没更新过时的问题。<b>第六条的jekyll教程是一个很好的入门资源，</b>可以先看一下这个教程。想要进一步了解的话，可以看一下官方文档。</p>
+<ol>
+    <li>jekyll 文档：<a href="https://jekyllrb.com/docs/">https://jekyllrb.com/docs/</a>（中文：<a
+            href="https://jekyllcn.com/docs/home/">https://jekyllcn.com/docs/home/</a>）</li>
+    <li>Bootstrap 文档：<a
+            href="https://getbootstrap.com/docs/4.2/getting-started/introduction/">https://getbootstrap.com/docs/4.2/getting-started/introduction/</a>
+    </li>
+    <li>Bootstrap 中文教程：<a
+            href="http://www.runoob.com/bootstrap4/bootstrap4-tutorial.html">http://www.runoob.com/bootstrap4/bootstrap4-tutorial.html</a>
+    </li>
+    <li>Git 中文教程：<a
+            href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000</a>
+    </li>
+    <li>Liquid 文档：<a href="https://shopify.github.io/liquid/">https://shopify.github.io/liquid/</a>（中文：<a
+            href="https://liquid.bootcss.com/">https://liquid.bootcss.com/</a>）</li>
+    <li>jekyll 教程：<a href="https://learn.cloudcannon.com/">https://learn.cloudcannon.com/</a></li>
+    <li>jekyll 视频教程：<a
+            href="https://www.youtube.com/watch?v=T1itpPvFWHI&list=PLLAZ4kZ9dFpOPV5C5Ay0pHaa0RJFhcmcB&index=1">https://www.youtube.com/watch?v=T1itpPvFWHI&list=PLLAZ4kZ9dFpOPV5C5Ay0pHaa0RJFhcmcB&index=1</a>
+    </li>
+</ol>
+    </div>
+</div>
+    </div>
+
+    <footer class="bg-light py-3 text-muted mt-auto">
+        <div class="container">
+            Powered by <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> & <a
+                href="https://jekyllrb.com/" target="_blank">jekyll</a>
+            <span class="float-right">All rights reserved <a href="https://github.com/hellozhaihy"
+                    target="_blank">@hyzhai</a></span>
+        </div>
+    </footer>
+
+    <script src="/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    </script>
+    <script src="/ajax/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</body>
+
+</html>
