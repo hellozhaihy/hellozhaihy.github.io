@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="hyzhai">
+    <meta name="description" content="hyzhai's blog">
+    <meta name="generator" content="jekyll 3.8.5">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/posts.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
+    <title>VSCode Java开发环境配置 - HYZHAI'S BLOG</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top flex-shrink-0"
+        style="opacity: 0.98">
+        <div class="container">
+            <a href="/" class="navbar-brand mr-auto"><b>HYZHAI'S BLOG</b></a>
+            <ul class="navbar-nav">
+                <li class="nav-item mr-3"><a href="/" class="nav-link">Home</a></li>
+                <li class="nav-item mr-3"><a href="/collections.html" class="nav-link">Collections</a></li>
+                <li class="nav-item"><a href="/about.html" class="nav-link">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container flex-shrink-0 mt-5">
+        <div class="jumbotron my-5 bg-light">
+    <div class="mx-5 text-justify">
+        
+        <h1><b>VSCode Java开发环境配置</b></h1>
+        <p class="text-muted">Feb 16, 2019</p>
+        
+        <p>Java的集成开发环境有很多，比如Eclipse、IDEA。这些开发环境只支持Java这一种语言，功能比较强大。VSCode安装插件后，也能开发Java，并且它还能写Python，是我目前使用较为频繁的一个编辑器。</p>
+<p>这篇博客介绍一下如何在VSCode中配置Java开发环境。网上介绍如何配置的文章有很多，但是经我尝试，都不太准确，于是决定自己重写一篇。博客主要内容翻译自VSCode的官方文档<a
+        href="https://code.visualstudio.com/docs/java/java-tutorial" target="_blank">Writing Java with Visual Studio
+        Code</a>，<em>建议大家在遇到问题时还是去找官方出的一些帮助文档。</em></p>
+<h2 class="mt-5 mb-3"><b>安装JDK和Maven</b></h2>
+<p>在开发Java前需要先安装JDK和Maven，JDK在<a
+        href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html"
+        target="_blank">这里</a>下载，Maven在<a href="https://maven.apache.org/download.cgi"
+        target="_blank">这里</a>下载。JDK下载完需要安装，Maven不用安装，解压后放在Java安装目录就好。接下来需要配置环境变量。Win10右键此电脑&gt;&gt;属性&gt;&gt;高级系统设置&gt;&gt;环境变量，如下所示：
+</p>
+<figure class="figure">
+    <img src="/resource/envvariable.png" alt="Win10环境变量窗口" style="width: 50%">
+    <figcaption class="figure-caption text-left font-italic">Win10环境变量窗口</figcaption>
+</figure>
+<p>单击下方的新建按钮，在变量名输入<span class="text-monospace">JAVA_HOME</span>，变量值输入JDK的安装目录，或者单击浏览目录定位到安装目录，目录形式如<span
+        class="text-monospace">D:\Program Files\Java\jdk1.8.0_201</span>。输入完成后单击确定，再新建一个名为<span
+        class="text-monospace">CLASSPATH</span>的变量，值为<span
+        class="text-monospace">.;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar</span>（<em>注意前面有一个点号</em>）。最后，编辑<span
+        class="text-monospace">Path</span>变量，添加三个bin目录，形式如：<span class="text-monospace">D:\Program
+        Files\Java\jdk1.8.0_201\bin</span>、<span class="text-monospace">D:\Program
+        Files\Java\jdk1.8.0_201\jre\bin</span>、<span class="text-monospace">D:\Program
+        Files\Java\apache-maven-3.6.0-bin\bin</span>。</p>
+<p>测试JDK和Maven是否安装成功。命令行分别输入<span class="text-monospace">java -version</span>、<span class="text-monospace">javac
+        -version</span>、<span class="text-monospace">mvn -v</span>，如果都有相应的版本号输出，说明安装成功。如果不能正确输出版本号，请检查环境变量是否设置正确。</p>
+<h2 class="mt-5 mb-3"><b>安装JAVA插件</b></h2>
+<p>VSCode运行Java文件，需要五个插件：</p>
+<ol>
+    <li>Language Support for Java(TM) by Red Hat</li>
+    <li>Debugger for Java</li>
+    <li>Java Test Runner</li>
+    <li>Maven for Java</li>
+    <li>Java Dependency Viewer</li>
+</ol>
+<p>安装这五个插件的简便方法是，在VSCode插件中搜索安装<a href="https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack"
+        target="_blank">Java Extension Pack</a>，这相当于一次性安装了这五个插件。当然，你也可以分别安装这几个插件。</p>
+<h2 class="mt-5 mb-3"><b>新建并运行Java文件</b></h2>
+<p>在用户目录新建<mark>java_in_vscode</mark>目录，在目录中新建<mark>Hello.java</mark>文件。当你打开<mark>.java</mark>文件时，Java语言环境会被自动加载，加载完成后，右下角的小火箭图标变为大拇指。
+</p>
+<figure class="figure">
+    <img src="/resource/create-file.gif" alt="" style="width: 75%">
+    <figcaption class="figure-caption text-left font-italic">新建Java文件</figcaption>
+</figure>
+<p>我看到有的文章上说，运行Java文件需要在用户设置中添加<span class="text-monospace">java.home</span>变量。因为前面已经在系统环境变量中新建了<span
+        class="text-monospace">JAVA_HOME</span>，这一步其实是不需要的。在<mark>Hello.java</mark>文件中输入以下代码。如果一切正常的话，按快捷键<kbd>F5</kbd>，控制台显示<q>hello
+        world</q>。这时，你的开发环境就配置好了。</p>
+<pre class="bg-dark text-white py-2"><code>public class hello {
+    public static void main(String[] args) {
+        System.out.println("hello world");
+    }
+}</code></pre>
+    </div>
+</div>
+    </div>
+
+    <footer class="bg-light py-3 text-muted mt-auto">
+        <div class="container">
+            Powered by <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> & <a
+                href="https://jekyllrb.com/" target="_blank">jekyll</a>
+            <span class="float-right">All rights reserved <a href="https://github.com/hellozhaihy"
+                    target="_blank">@hyzhai</a></span>
+        </div>
+    </footer>
+
+    <script src="/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    </script>
+    <script src="/ajax/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</body>
+
+</html>
