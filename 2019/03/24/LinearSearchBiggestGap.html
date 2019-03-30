@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-100">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="hyzhai">
+  <meta name="description" content="hyzhai's blog">
+  <meta name="generator" content="jekyll 3.8.5">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/posts.css">
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.6.0/dist/highlightjs-line-numbers.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();hljs.initLineNumbersOnLoad();</script>
+  <title>查找最大间隙的线性时间算法 - HYZHAI'S BLOG</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top flex-shrink-0"
+    style="opacity: 0.98">
+    <div class="container">
+      <a href="/" class="navbar-brand mr-auto"><b>HYZHAI'S BLOG</b></a>
+      <ul class="navbar-nav">
+        <li class="nav-item mr-3"><a href="/" class="nav-link">Home</a></li>
+        <li class="nav-item mr-3"><a href="/collections.html" class="nav-link">Collections</a></li>
+        <li class="nav-item"><a href="/about.html" class="nav-link">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container flex-shrink-0 mt-5">
+    <div class="jumbotron my-5 bg-light">
+    <div class="mx-5 text-justify">
+        
+        <h1><b>查找最大间隙的线性时间算法</b></h1>
+        <p class="text-muted">Mar 24, 2019</p>
+        
+        <p>这是算法课上的一道作业题。问题描述为：给定的文件中有 \(n\) 个实数 \(x_1, x_2, ..., x_n\)，求这 \(n\)
+    个数在实轴上相邻2个数之间的最大差值，要求是用一个线性时间的算法。要解决的问题很简单，但是加上一个线性时间的约束就不太好解决了。如果之前没有遇到过类似的题，估计不太好想出解决办法。</p>
+<hr />
+<p>输入： 1.0 3.5 7.2 1.1 9.0 6.7 2.1 8.6 10.0 1.2</p>
+<p>输出：3.2</p>
+<hr />
+<p>标准答案是采用捅排序的办法，具体是将这 \(n\) 个数，划分为 \(n-1\) 区间，每个区间长度为 \(max-min \over n-1\)， \(max\) 和 \(min\) 分别为这 \(n\)
+    个数中的最大和最小者。<em>将除了 \(max\) 和 \(min\) 剩下的 \(n-2\) 个数，放入这 \(n-1\)
+        个区间中，根据组合数学中的鸽巢原理，至少有一个区间为空，所以最大间隙一定不会发生在区间内。</em>最大间隙会出现在两个相邻非空区间（两个非空区间夹有若干空区间也算作相邻）之间。依次计算前一个非空区间的上界（区间内最大的数）和相邻的下一个非空区间的下界（区间内最小的数）的差，差的最大者即为最大间隙。C++代码如下：
+</p>
+<pre><code class="c++">    #include "pch.h"
+    #include <iostream>
+    #include <fstream>
+    #include <string>
+    #include <vector>
+    using namespace std;
+    
+    int main()
+    {
+        unsigned int n = 0, index = 0;
+        float min, max, range;
+        ifstream input("input.txt");
+        input >> n;
+        vector<unsigned int> count(n - 1, 0);
+        vector<float> x(n), floor(n - 1, 0), ceil(n, 0);
+        vector<bool> flag(n - 1, true);
+        for (int i = 0; i < n; ++i)
+        {
+            input >> x[i];
+            if (i == 0)
+                min = max = x[0];
+            else if (x[i] > max)
+                max = x[i];
+            else if (x[i] < min)
+                min = x[i];
+        }
+        range = (max - min) / (n - 1);
+    
+        for (int i = 0; i < n; ++i)
+        {
+            index = static_cast<int>((x[i] - min) / range);
+            if (index == n - 1)
+                --index;
+            ++count[index];
+            if (flag[index])
+            {
+                flag[index] = false;
+                floor[index] = ceil[index] = x[i];
+            }
+            if (x[i] < floor[index])
+                floor[index] = x[i];
+            if (x[i] > ceil[index])
+                ceil[index] = x[i];
+        }
+    
+        float maxGap = 0, tmpGap, tmpceil = ceil[0];
+        for (int i = 1; i < n - 1; ++i)
+        {
+            if (count[i])
+            {
+                tmpGap = floor[i] - tmpceil;
+                tmpceil = ceil[i];
+                if (tmpGap > maxGap)
+                    maxGap = tmpGap;
+            }
+        }
+    
+        cout << "There are "
+            << n
+            << " numbers in this file: ";
+        for (auto v : x)
+            cout << v << " ";
+        cout << "\nThe max gap is "
+            << maxGap
+            << "\nOutput file..."
+            << endl;
+    
+        ofstream output("output.txt");
+        output << maxGap;
+        output.close();
+        return 0;
+    }</code></pre>
+<p>代码通过 \(x(n)\) 保存文件中的 \(n\) 个实数，\(count(n-1)\) 用于记录区间中是否有数，\(floor(n-1)\) 和 \(ceil(n-1)\) 用来记录区间中数的下界和上界。代码中的第31行将
+    \(x(i)\) 与 \(min\)
+    作差除以区间长度后取整作为区间索引，意味着每个区间是一个左闭右开的区间。这样，对于 \(max\) 需要索引为 \(n-1\) 的区间存放，而索引值最大为 \(n-2\)
+    （基于0的索引），因此遇到最大值时需要将索引值减一。\(flag(n)\) 的作用是在区间第一次存值时初始化上下界。<em>你或许想通过初始化 \(floor(n-1)\) 时赋一个很大的值，初始化 \(ceil(n-1)\)
+        时赋一个很小的值，来取代 \(flag(n-1)\) 的作用。但这是不可取的，因为你不能确定你读进来的数有多大多小，如果读进来的值比你赋的 \(ceil(n-1)\) 还大，那么 \(ceil(n-1)\)
+        就不再是区间的上界了。</em></p>
+<p>关于代码中还有的一个疑问是，最前面提到将除了 \(max\) 和 \(min\) 剩下的 \(n-2\) 个数放入 \(n-1\) 个区间中，为什么在代码中又将这 \(max\) 和 \(min\) 放入了这些区间中？这不变成了
+    \(n\) 个数放入 \(n-1\) 个区间，至少有一个区间有两个数吗？可以这样理解，把 \(max\) 和 \(min\) 放入区间中，只是为了通过刷新最后一个区间的上界和第一个区间的下界来记录这 \(n\)
+    个数中的最大和最小者，而这两个数又是真实存在的，需要对相应区间的计数加一。</p>
+    </div>
+</div>
+  </div>
+
+  <footer class="bg-light py-3 text-muted mt-auto">
+    <div class="container">
+      Powered by <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> & <a href="https://jekyllrb.com/"
+        target="_blank">jekyll</a>
+      <span class="float-right">All rights reserved <a href="https://github.com/hellozhaihy"
+          target="_blank">@hyzhai</a></span>
+    </div>
+  </footer>
+
+  <script src="/jquery/jquery-3.3.1.slim.min.js"></script>
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    })
+  </script>
+  <script src="/ajax/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+</body>
+
+</html>
