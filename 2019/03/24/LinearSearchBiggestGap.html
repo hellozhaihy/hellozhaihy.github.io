@@ -47,11 +47,10 @@
     个数中的最大和最小者。<em>将除了 \(max\) 和 \(min\) 剩下的 \(n-2\) 个数，放入这 \(n-1\)
         个区间中，根据组合数学中的鸽巢原理，至少有一个区间为空，所以最大间隙一定不会发生在区间内。</em>最大间隙会出现在两个相邻非空区间（两个非空区间夹有若干空区间也算作相邻）之间。依次计算前一个非空区间的上界（区间内最大的数）和相邻的下一个非空区间的下界（区间内最小的数）的差，差的最大者即为最大间隙。C++代码如下：
 </p>
-<pre><code class="c++">    #include "pch.h"
-    #include <iostream>
-    #include <fstream>
-    #include <string>
-    #include <vector>
+<pre><code class="c++">    #include &ltiostream&gt
+    #include &ltfstream&gt
+    #include &ltstring&gt
+    #include &ltvector&gt
     using namespace std;
     
     int main()

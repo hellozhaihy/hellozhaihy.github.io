@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-100">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="hyzhai">
+  <meta name="description" content="hyzhai's blog">
+  <meta name="generator" content="jekyll 3.8.5">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/posts.css">
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.6.0/dist/highlightjs-line-numbers.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();hljs.initLineNumbersOnLoad();</script>
+  <title>XGBoost算法理解及实践 - HYZHAI'S BLOG</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top flex-shrink-0"
+    style="opacity: 0.98">
+    <div class="container">
+      <a href="/" class="navbar-brand mr-auto"><b>HYZHAI'S BLOG</b></a>
+      <ul class="navbar-nav">
+        <li class="nav-item mr-3"><a href="/" class="nav-link">Home</a></li>
+        <li class="nav-item mr-3"><a href="/collections.html" class="nav-link">Collections</a></li>
+        <li class="nav-item"><a href="/about.html" class="nav-link">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container flex-shrink-0 mt-5">
+    <div class="jumbotron my-5 bg-light">
+    <div class="mx-5 text-justify">
+        
+        <h1><b>XGBoost算法理解及实践</b></h1>
+        <p class="text-muted">May 05, 2019</p>
+        
+        <p>最近想参加数据科学的比赛，因此在这个五一花了点时间看了些Scikit-Learn的user guide。我觉得在看user guide之前最好对算法的推导过程有比较详细的了解，Scikit-Learn中机器学习算法的api都是根据公式设定的。你需要对公式有比较详细的了解才能知道各个参数的作用，以及改变这个参数模型会有什么变化。这篇博客记录我对XGBoost算法的理解，并用一个实例演示下，XGBoost完整的建模过程。</p>
+<p>XGBoost是由国人陈天奇提出的，全称为eXtreme Gradient Boost。我在一篇访谈中看到因为陈天奇做事情追求极致，所以他用了extreme这个词。XGBoost是对梯度提升算法的一种改进。关于梯度提升算法在李航的《统计学习方法》中有详细的介绍，这部分内容在西瓜书中好像是没有的。</p>
+<!-- <p>梯度提升是一种集成学习方法，属于Boost的一种，比较常见的是Adaboost(Adaptive Boost)。以分类问题为例，AdaBoost在学习过程中需要依次建立许多基学习器，在建立基学习器的过程中不断增大分类错误的样本的权重，减小分类正确样本的权重，也即意味着后面的基学习器会着重处理前面的基学习器分错的样本，最后通过将这些基学习器进行进行线性组合形成一个完整的模型。</p>
+<p>Adaboost可以看作是加法模型（additive model）的一种：</p> -->
+<p>XGBoost集成的是CART(Classification and Regression Tree)树，CART树是一个二叉树，CART树的每一个叶节点对应一个值。不同优化的是机器学习中常见的目标函数：
+    $$ \text{obj}(\theta) = L(\theta) + \Omega(\theta) $$
+    其中 \(L\) 项损失函数，\(\Omega\) 是正则化项。</p>
+<p>对于回归问题常用平方损失函数（quadratic loss function）：
+    $$ L(\theta) = \sum_i (y_i-\hat{y_i})^2 $$
+    对于分类问题则常用逻辑斯谛损失函数（logistic loss function）：
+    $$ L(\theta) = \sum_i [y_i\text{ln}(1+e^{\hat{-y_i}}+(1-y_i)\text{ln}(1+e^{\hat{y_i}})] $$
+    逻辑斯谛损失函数蕴含了极大似然的思想。假设我们求解的是个二分类问题，正例为1，反例为0。回想一下逻辑斯谛回归，
+    $$ p_1 = \frac{1}{1+e^{-\hat{y_i}}} $$
+    是我们将样本预测为正例的概率。
+    $$ p_0 = 1 - p_1 = \frac{e^{-\hat{y_i}}}{1+e^{-\hat{y_i}}} = \frac{1}{1+e^{\hat{y_i}}}$$
+    是我们将样本预测为反例的概率。
+</p>
+<p>输入样本 \(x_i\) 的标记为 \(y_i\) ，当 \(y_i=1\) 时，我们当然希望模型预测样本为正例的概率 \(p_1\) 的值比较大；而当 \(y_i=0\) 时，我们希望模型预测样本为反例的概率 \(p_0\) 的值比较大。样本的数目为 \(N\)时，我们需要求解的是以下优化问题：
+    $$ \max \sum_i [y_i\frac{1}{1+e^{-\hat{y_i}}} + (1-y_i)\frac{1}{1+e^{\hat{y_i}}}] $$
+</p>
+<p>当采用对数似然，即对输出的概率 \(p_1, p_0\) 取对数时，我们的优化目标变为：
+        $$ \min \sum_i [y_i\text{ln}(1+e^{\hat{-y_i}}+(1-y_i)\text{ln}(1+e^{\hat{y_i}})] $$
+    这即为逻辑斯谛损失函数。
+</p>
+<p>Boost集成可以看作是加法模型（additive model）：
+    $$ \text{obj}(\theta) = \sum_i^n L(\theta) + \Omega(\theta) $$
+</p>
+
+    </div>
+</div>
+  </div>
+
+  <footer class="bg-light py-3 text-muted mt-auto">
+    <div class="container">
+      Powered by <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> & <a href="https://jekyllrb.com/"
+        target="_blank">jekyll</a>
+      <span class="float-right">All rights reserved <a href="https://github.com/hellozhaihy"
+          target="_blank">@hyzhai</a></span>
+    </div>
+  </footer>
+
+  <script src="/jquery/jquery-3.3.1.slim.min.js"></script>
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    })
+  </script>
+  <script src="/ajax/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+</body>
+
+</html>

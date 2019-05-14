@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-100">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="hyzhai">
+  <meta name="description" content="hyzhai's blog">
+  <meta name="generator" content="jekyll 3.8.5">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/posts.css">
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.6.0/dist/highlightjs-line-numbers.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();hljs.initLineNumbersOnLoad();</script>
+  <title>VSCode C++开发环境配置 - HYZHAI'S BLOG</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top flex-shrink-0"
+    style="opacity: 0.98">
+    <div class="container">
+      <a href="/" class="navbar-brand mr-auto"><b>HYZHAI'S BLOG</b></a>
+      <ul class="navbar-nav">
+        <li class="nav-item mr-3"><a href="/" class="nav-link">Home</a></li>
+        <li class="nav-item mr-3"><a href="/collections.html" class="nav-link">Collections</a></li>
+        <li class="nav-item"><a href="/about.html" class="nav-link">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container flex-shrink-0 mt-5">
+    <div class="jumbotron my-5 bg-light">
+    <div class="mx-5 text-justify">
+        
+        <h1><b>VSCode C++开发环境配置</b></h1>
+        <p class="text-muted">Apr 25, 2019</p>
+        
+        <p>之前尝试过一次在VSCode中搭建C++开发环境，看了一下文档感觉好麻烦，于是转移到VS中写C++代码。最近想用C++刷LeetCode题目，VSCode中刚好有个LeetCode刷题的插件，便又试着在VSCode中搭建C++环境，还好，在官方帮助的指导下整个过程还是挺简单的。</p>
+
+<p>不同的编译器对应不同的开发环境搭建方式，我这里会讲一下使用MinGW和MSVC编译器搭建开发环境。不过，我推荐使用MSVC编译器，因为在实际操作过程中，我发现MinGW编译器不能很好地进行语法检查。比如下面两行代码：</p>
+
+<pre><code class="language-C++"> int cnt =10;
+ int bad[cnt];
+</code></pre>
+
+<p>我先定义了一个整型变量cnt，接着又定义了一个cnt大小的数组。因为cnt不是一个常量，所以这两句是有问题的，但是这在MinGW编译器中检查不出来。</p>
+
+<h2 class="mt-5 mb-3"><b>使用MSVC编译器</b></h2>
+
+<p>无论什么编译器，<a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank">C++ extension for VS Code</a>插件是必须要安装的。MSVS编译器需要通过安装VS和VS中的C++开发包来安装，我电脑上安装的是VS 2019社区版。</p>
+
+<p>必须使用VS shell在桌面新建一个helloworld文件夹，并使用VSCode打开：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mkdir helloworld
+ cd helloworld
+ code .
+</code></pre></div></div>
+
+<p>开发环境的配置需要使用到三个json文件：c_cpp_properties.json、tasks.json、launch.json</p>
+
+<p>选择shell CTRL+SHIFT+P 输入：select default shell选择command prompt</p>
+
+<h2 class="mt-5 mb-3"><b>使用MinGW编译器</b></h2>
+<p>选择git shell</p>
+
+    </div>
+</div>
+  </div>
+
+  <footer class="bg-light py-3 text-muted mt-auto">
+    <div class="container">
+      Powered by <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> & <a href="https://jekyllrb.com/"
+        target="_blank">jekyll</a>
+      <span class="float-right">All rights reserved <a href="https://github.com/hellozhaihy"
+          target="_blank">@hyzhai</a></span>
+    </div>
+  </footer>
+
+  <script src="/jquery/jquery-3.3.1.slim.min.js"></script>
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    })
+  </script>
+  <script src="/ajax/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+</body>
+
+</html>
