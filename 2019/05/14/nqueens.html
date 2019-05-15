@@ -37,7 +37,332 @@
         <h1><b>回溯法求解n后问题</b></h1>
         <p class="text-muted">May 14, 2019</p>
         
-        
+        <p>n后问题是LeetCode中的<a href="https://leetcode-cn.com/problems/n-queens/" , target="_blank">第51题</a>，问题描述为：在 \(n\times n\)
+    的棋盘上放置彼此不受攻击的 \(n\) 个皇后。
+    按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。\(n\) 后问题等价于在 \(n\times n\) 格的棋盘上放置 \(n\) 个皇后，任何2个皇后不放在同一行或同一列或同一斜线上。下图是当
+    \(n=8\) 时一种满足要求的解。</p>
+<figure class="figure">
+    <img src="/resource/nQueensSample.png" alt="" style="width: 75%">
+    <!-- <figcaption class="figure-caption text-left font-italic">在GitHub新建博客仓库</figcaption> -->
+</figure>
+<p><b>这个问题可以使用回溯法来求解，在这篇博客中，我会展示两种回溯法来求解这个问题。说是两种方法，但这两种方法差别不大。编程语言选择C++。</b></p>
+<p>用一个长度为 \(n\) 的数组 \(queensPos\) 表示皇后所处的位置，\(queensPos[i]\) 表示第 \(i\) 行的皇后所处的位置，\(0\leq queensPos[i] \leq
+    n-1\)。下面考虑一下约束条件：</p>
+<ol>
+    <li>皇后不能处于同一行：通过构造数组 \(queensPos\) 建模此问题，皇后自然不可能处于同一行。</li>
+    <li>皇后不能处于同一列：即 \(queensPos\) 的取值应为 \(0, 1, .., n-2, n-1\) 的一个全排列。</li>
+    <li>皇后不能处于同一斜线：即两个皇后的连线斜率不能为1或-1，转化为逻辑关系：\(i\neq j\) 时，\(\text{abs}(queensPos[i] - queensPos[i])\neq
+        \text{abs}(i-j)\)</li>
+</ol>
+<p>有上面的分析，求解n后问题的思路就比较清晰了：列举出 \(0, 1, .., n-2, n-1\) 的所有全排列，考察每个排列是否满足约束条件3，如果满足，即为可行解。
+    再进一步想一下，如果已经有了排列，条件3很容易就能验证，关键问题是如何列举出所有的全排列。我前面提到这篇博客会介绍两种方法，这两种方法最大的不同就是列举全排列的方式不同。
+    简单起见，先看两个输出 \(0, 1, 2, 3, 4\) 所有全排列的程序。</p>
+<pre><code class="c++">    #include &lt;iostream&gt;
+    #include &lt;vector>&gt;
+    using namespace std;
+    
+    vector&lt;int&gt; range{ 0, 1, 2, 3 };
+    int rangeSize = 4;
+    int num = 0;
+    
+    void swap(int& a, int& b)
+    {
+        int temp;
+        temp = a;
+        a = b;
+        b = temp;
+    }
+    
+    void outputPermutation(int n)
+    {
+        if (n >= rangeSize)
+        {
+            num++;
+            for (auto ele : range)
+                cout << ele << " ";
+            cout << endl;
+            return;
+        }
+        for (int i = n; i < rangeSize; i++)
+        {
+            swap(range[n], range[i]);
+            outputPermutation(n + 1);
+            swap(range[n], range[i]);
+        }
+    }
+    
+    int main()
+    {
+        outputPermutation(0);
+        cout << num << endl;
+    }</code></pre>
+
+<pre><code class="c++">    #include &lt;iostream&gt;
+    #include &lt;vector&gt;
+    using namespace std;
+    
+    vector&lt;int&gt; range(4, -1);
+    int rangeSize = 4;
+    int num = 0;
+    
+    void swap(int& a, int& b)
+    {
+        int temp;
+        temp = a;
+        a = b;
+        b = temp;
+    }
+    
+    bool constraint(int t)
+    {
+        for (int i = 0; i < t; i++)
+        {
+            if (range[i] == range[t])
+                return false;
+        }
+        return true;
+    }
+    
+    void outputPermutation(int n)
+    {
+        if (n >= rangeSize)
+        {
+            num++;
+            for (auto ele : range)
+                cout << ele << " ";
+            cout << endl;
+            return;
+        }
+        for (int i = 0; i < rangeSize; i++)
+        {
+            range[n] = i;
+            if(constraint(n))
+                outputPermutation(n + 1);
+        }
+    }
+    
+    int main()
+    {
+        outputPermutation(0);
+        cout << num << endl;
+    }</code></pre>
+<p>下面是n后问题的两种解法，可以直接在LeetCode提交。解法一的速度相对快一些儿，解法一在LeetCode中提交运行，只用了4ms，打败了100%的提交。</p>
+<pre><code class="c++">    #include &lt;iostream&gt;
+    #include &lt;vector&gt;
+    #include &lt;string&gt;
+    #include &lt;algorithm&gt;
+    #include &lt;cmath&gt;
+    using namespace std;
+
+    class Solution
+    {
+    private:
+        vector&lt;int&gt; queensPos;
+        int queensNum;
+        vector&lt;vector&lt;string&gt;&gt; res;
+        bool constraint(int r)
+        {
+            for (int i = 0; i < r; i++)
+            {
+                if (abs(i - r) == abs(queensPos[i] - queensPos[r]))
+                    return false;
+            }
+            return true;
+        }
+        void swap(int r, int c)
+        {
+            int temp;
+            temp = queensPos[r];
+            queensPos[r] = queensPos[c];
+            queensPos[c] = temp;
+        }
+        void backstrack(int r)
+        {
+            if (r >= queensNum)
+            {
+                vector&lt;string&gt; temp(queensNum, string(queensNum, '.'));
+                for (int i = 0; i < queensNum; i++)
+                {
+                    temp[i][queensPos[i]] = 'Q';
+                }
+                res.push_back(temp);
+                return;
+            }
+            for (int c = r; c < queensNum; c++)
+            {
+                swap(r, c);
+                if (constraint(r))
+                    backstrack(r + 1);
+                swap(r, c);
+            }
+        }
+
+    public:
+        vector&lt;vector&lt;string&gt;&gt; solveNQueens(int n)
+        {
+            queensNum = n;
+            if (n <= 0)
+            {
+                return res;
+            }
+            for (int i = 0; i < n; i++)
+            {
+                queensPos.push_back(i);
+            }
+            backstrack(0);
+            return res;
+        }
+    };
+
+    int main()
+    {
+        Solution test;
+        vector&lt;vector&lt;string&gt;&gt; result = test.solveNQueens(9);
+        for (auto ele1 : result)
+        {
+        for (auto ele2 : ele1)
+            cout << ele2 << endl;
+        cout << endl;
+        }
+        cout << result.size() << endl;
+        return 0;
+    }</code></pre>
+
+<pre><code class="c++">    #include &lt;iostream&gt;
+    #include &lt;vector&gt;
+    #include &lt;string&gt;
+    #include &lt;algorithm&gt;
+    #include &lt;cmath&gt;
+    using namespace std;
+
+    class Solution
+    {
+    private:
+        vector&lt;int&gt; queensPos;
+        int queensNum;
+        vector&lt;vector&lt;string&gt;&gt; res;
+        bool constraint(int r)
+        {
+            for (int i = 0; i < r; i++)
+            {
+                if (abs(i - r) == abs(queensPos[i] - queensPos[r]) || queensPos[i] == queensPos[r])
+                    return false;
+            }
+            return true;
+        }
+        void backstrack(int r)
+        {
+            if (r >= queensNum)
+            {
+                vector&lt;string&gt; temp(queensNum, string(queensNum, '.'));
+                for (int i = 0; i < queensNum; i++)
+                {
+                    temp[i][queensPos[i]] = 'Q';
+                }
+                res.push_back(temp);
+                return;
+            }
+            for (int c = 0; c < queensNum; c++)
+            {
+                queensPos[r] = c;
+                if (constraint(r))
+                    backstrack(r + 1);
+            }
+        }
+
+    public:
+        vector&lt;vector&lt;string&gt;&gt; solveNQueens(int n)
+        {
+            queensNum = n;
+            if (n <= 0)
+            {
+                return res;
+            }
+            queensPos.resize(n, -1);
+            backstrack(0);
+            return res;
+        }
+    };
+
+    int main()
+    {
+        Solution test;
+        vector&lt;vector&lt;string&gt;&gt; result = test.solveNQueens(9);
+        for (auto ele1 : result)
+        {
+            for (auto ele2 : ele1)
+                cout << ele2 << endl;
+            cout << endl;
+        }
+
+        cout << result.size() << endl;
+        return 0;
+    }</code></pre>
+
+<p>一个与n后问题类似，但是比n后稍微难一点儿的问题是拉丁矩阵问题。问题描述为：有 \(n\) 种不同形状的宝石，每种宝石有足够多颗。欲将这些宝石排列成 \(m\) 行 \(n\) 列的一个矩阵，\(m\leq n\)，使矩阵中每一行和每一列的宝石都没有相同的形状。
+    试设计一个算法，计算出对于给定的 \(m\) 和 \(n\)，有多少种不同的宝石排列方案。下面贴出这个问题的代码。
+</p>
+<pre><code class="c++">    #include &lt;iostream&gt;
+    #include &lt;vector&gt;
+    using namespace std;
+
+    vector&lt;vector&lt;int&gt;&gt; matrix;
+    int m, n, result = 0;
+
+    void swap(int& a, int& b)
+    {
+        int temp;
+        temp = a;
+        a = b;
+        b = temp;
+    }
+
+    bool constraint(int r, int c)
+    {
+        for (int i = 0; i < r; i++)
+        {
+            if (matrix[i][c] == matrix[r][c])
+                return false;
+        }
+        return true;
+    }
+
+    void backstrack(int i, int j)
+    {
+        if (j >= n)
+        {
+            i++;
+            j = 0;
+        }
+        if (i >= m)
+        {
+            result++;
+            return;
+        }
+        for (int k = j; k < n; k++)
+        {
+            swap(matrix[i][j], matrix[i][k]);
+            if (constraint(i, j))
+                backstrack(i, j + 1);
+            swap(matrix[i][j], matrix[i][k]);
+        }
+    }
+
+    int main()
+    {
+        m = 3; n = 3;
+        for (int i = 0; i < m; i++)
+        {
+            matrix.push_back(vector&lt;int&gt;(n, 0));
+            for (int j = 0; j < n; j++)
+            {
+                matrix[i][j] = j;
+            }
+        }
+        backstrack(0, 0);
+        cout << "The number of valid permutations is: " << result << endl;
+        return 0;
+    }</code></pre>
     </div>
 </div>
   </div>
@@ -59,7 +384,7 @@
   </script>
   <script src="/ajax/popper.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_SVG' async></script>
 </body>
 
 </html>

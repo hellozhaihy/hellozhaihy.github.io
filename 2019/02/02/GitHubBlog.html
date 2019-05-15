@@ -82,6 +82,10 @@
 <p>插入公式可以使用<a href="https://www.mathjax.org/" targe="_blank">MathJax</a>，<a href="https://highlightjs.org/"
                 target="_blank">hightlight.js</a>和<a href="https://github.com/wcoder/highlightjs-line-numbers.js/"
                 target="_blank">highlightjs-line-numbers.js</a>配合使用可以高亮代码，显示行号。</p>
+<p>使用MathJax的方法也比较简单，在自己网页中引用js即可：</p>
+<pre class="html"><code>    &lt;script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_SVG' async&gt;&lt;/script&gt;</code></pre>
+<p>这句代码中的"_SVG"表示使用SVG来渲染公式，默认的是"_CHTML"，即使用CommonHTML渲染。在我使用的过程中发现使用CommonHTML渲染时，点击公式，公式周围的文字会有轻微的移动，所以改用了SVG渲染。
+        MathJax中使用分隔符<code>\(...\)</code>表示行内公式，使用<code>$$...$$</code>表示行间公式。</p>
 
 <h2 class="mt-5 mb-3"><b>参考资料</b></h2>
 <p>资料有中文也有英文，建议阅读英文，中文文档存在很久没更新过时的问题。<b>第六条的jekyll教程是一个很好的入门资源，</b>可以先看一下这个教程。想要进一步了解的话，可以看一下官方文档。</p>
@@ -127,7 +131,7 @@
   </script>
   <script src="/ajax/popper.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_SVG' async></script>
 </body>
 
 </html>
