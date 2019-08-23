@@ -47,7 +47,7 @@
 <p>对于回归问题常用平方损失函数（quadratic loss function）：
     $$ L(\theta) = \sum_i (y_i-\hat{y_i})^2 $$
     对于分类问题则常用逻辑斯谛损失函数（logistic loss function）：
-    $$ L(\theta) = \sum_i [y_i\text{ln}(1+e^{\hat{-y_i}}+(1-y_i)\text{ln}(1+e^{\hat{y_i}})] $$
+    $$ L(\theta) = \sum_i [y_i\text{ln}(1+e^{\hat{-y_i}})+(1-y_i)\text{ln}(1+e^{\hat{y_i}})] $$
     逻辑斯谛损失函数蕴含了极大似然的思想。假设我们求解的是个二分类问题，正例为1，反例为0。回想一下逻辑斯谛回归，
     $$ p_1 = \frac{1}{1+e^{-\hat{y_i}}} $$
     是我们将样本预测为正例的概率。
@@ -58,7 +58,7 @@
     $$ \max \sum_i [y_i\frac{1}{1+e^{-\hat{y_i}}} + (1-y_i)\frac{1}{1+e^{\hat{y_i}}}] $$
 </p>
 <p>当采用对数似然，即对输出的概率 \(p_1, p_0\) 取对数时，我们的优化目标变为：
-        $$ \min \sum_i [y_i\text{ln}(1+e^{\hat{-y_i}}+(1-y_i)\text{ln}(1+e^{\hat{y_i}})] $$
+        $$ \max \sum_i [-y_i\text{ln}(1+e^{\hat{-y_i}})-(1-y_i)\text{ln}(1+e^{\hat{y_i}})] = \min \sum_i [y_i\text{ln}(1+e^{\hat{-y_i}})+(1-y_i)\text{ln}(1+e^{\hat{y_i}})]$$
     这即为逻辑斯谛损失函数。
 </p>
 <p>Boost集成可以看作是加法模型（additive model）：
